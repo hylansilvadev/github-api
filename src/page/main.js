@@ -44,20 +44,8 @@ const searchicon = document.createElement('img');
 searchicon.src = seachIcon;
 hndSearchButton.appendChild(searchicon) // adicionando a div do input ao wrapper
 
-function habilitaBotao() {
-  const botao = document.querySelector('.search-btn');
-  const input = document.querySelector('.search-input');
-  
-  input.addEventListener('input', function() {
-    if (input.value !== '') {
-      botao.disabled = false;
-    } else {
-      botao.disabled = true;
-    }
-  });
-}
 
-habilitaBotao();
-
-
-// getUserProps('https://api.github.com/users/hylansilva')
+const enableButton = () => {
+    hndSearchButton.disabled = searchInput.value === '';
+  }
+  searchInput.addEventListener('input', enableButton);
