@@ -152,10 +152,9 @@ export const getUserProps = (user) =>{
     axios.get(`https://api.github.com/users/${user}/repos`)
     .then(res=>{
         const userProps = res.data;
-        userArr.push(userProps);
         document.body.removeChild(searchWrapper);
         groupTwo();
-        console.log(userArr);
+        console.log(userProps);
     })
     .catch(err => {
       if (err.response && err.response.status === 404){
