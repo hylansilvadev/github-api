@@ -1,19 +1,13 @@
 // CRIADO POR : @lanosilvadev | hylansilva
 // Importações
-
 import axios from 'axios';
-
 import '../styles/userPropsStyle.css';
 import arrowLeft from '/arrow-left.svg';
-
 import seachIcon from '/search-icon.svg';
 import logoimg from '/logo.svg';
 import '../styles/mainStyle.css';
 
-let repositories = [];
-
-let slicedRepos;
-
+// criando elementos da DOM
 const searchInput = document.createElement('input');
 const searchWrapper = document.createElement("div");
 const wrapper = document.createElement('div');
@@ -43,6 +37,7 @@ const repoWrapper = document.createElement('div');
 const repoList = document.createElement('ul');
 const mainWrapperContainerDiv = document.createElement('div');
 
+// Funções
 const toast = (title, message) =>{
   spanCluseToastButton.innerText = "x"
   hndCloseToastButton.appendChild(spanCluseToastButton);
@@ -184,9 +179,19 @@ mainWrapperContainer.appendChild(repoWrapper);
 repoList.className = "repo-list";
 repoWrapper.appendChild(repoList);
 
+const backPageOne = () =>{
+    document.body.removeChild(wrapper);
+    searchInput.value = '';
+    searchInput.focus();
+    groupOne();
+  };
+
+hndBackButton.onclick = backPageOne;
+
 }
 
 const listRepos = (repos) => {
+  repoList.innerHTML = ''; // limpa a lista antes de renderizar
   repos.forEach((repo)=>{
     const repoListItem = document.createElement('li');
     repoListItem.className = "repo-list-item";
@@ -234,7 +239,6 @@ const getUserRepoProps = (user) =>{
     })
 }
 
-
 const getUserProps = (user) =>{
   axios.get(`https://api.github.com/users/${user}`)
       .then(res=>{
@@ -254,15 +258,5 @@ const getUserProps = (user) =>{
       
     })
 };
-
-const backPageOne = () =>{
-    document.body.removeChild(wrapper);
-    searchInput.value = '';
-    searchInput.focus();
-    sortedRepos = [];
-    groupOne();
-  };
-
-hndBackButton.onclick = backPageOne;
 
 groupOne();
