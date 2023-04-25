@@ -150,6 +150,12 @@ strong{
     height: 115px;
 }
 
+.main-wrapper-container-div{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
 .main-wrapper-container{
     display: flex;
     justify-content: center;

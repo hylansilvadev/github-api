@@ -41,7 +41,7 @@ const mainWrapperHeader = document.createElement('header');
 const mainWrapperContainer = document.createElement('main');
 const repoWrapper = document.createElement('div');
 const repoList = document.createElement('ul');
-
+const mainWrapperContainerDiv = document.createElement('div');
 
 const toast = (title, message) =>{
   spanCluseToastButton.innerText = "x"
@@ -171,8 +171,12 @@ wrapper.appendChild(main);
 mainWrapperHeader.className = "main-wrapper-header";
 main.appendChild(mainWrapperHeader);
 
+
+mainWrapperContainerDiv.appendChild(mainWrapperContainer);
+mainWrapperContainerDiv.className = "main-wrapper-container-div";
+
 mainWrapperContainer.className = "main-wrapper-container";
-main.appendChild(mainWrapperContainer);
+main.appendChild(mainWrapperContainerDiv);
 
 repoWrapper.className = "repo-wrapper";
 mainWrapperContainer.appendChild(repoWrapper);
@@ -220,6 +224,9 @@ const getUserRepoProps = (user) =>{
           const sortedRepos = userReposProps.sort(
             (a, b) => new Date(b.created_at) - new Date(a.created_at)
           );
+          if (repoWrapper.firstChild) {
+            repoWrapper.removeChild(repoWrapper.firstChild);
+          }
           listRepos(sortedRepos);
         }
     }).catch((err) => {
@@ -251,10 +258,9 @@ const getUserProps = (user) =>{
 const backPageOne = () =>{
     document.body.removeChild(wrapper);
     searchInput.value = '';
-    groupOne();
     searchInput.focus();
     sortedRepos = [];
-    mainWrapperContainer.removeChild(repoWrapper);
+    groupOne();
   };
 
 hndBackButton.onclick = backPageOne;
