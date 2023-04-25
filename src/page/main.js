@@ -185,9 +185,15 @@ repoWrapper.appendChild(repoList);
 const listRepos = (repos) => {
   repos.forEach((repo)=>{
     const repoListItem = document.createElement('li');
+    repoListItem.className = "repo-list-item";
+    const repoListItemDiv = document.createElement('div');
+    repoListItemDiv.className = "repo-list-item-div";
     const repoName = document.createElement('h2');
+    repoName.className = "repo-name";
     const repoResume = document.createElement('p');
+    repoResume.className = "repo-resume";
     const hndGoToTheRepo = document.createElement('button');
+    hndGoToTheRepo.className = "repo-btn-link";
 
     repoName.innerText = repo.name;
     repoResume.innerText = repo.description || 'Sem descrição';
@@ -196,26 +202,31 @@ const listRepos = (repos) => {
       window.open(repo.html_url, '_blank');
     });
     repoListItem.appendChild(repoName);
-    repoListItem.appendChild(repoResume);
-    repoListItem.appendChild(hndGoToTheRepo);
+    repoListItemDiv.appendChild(repoResume);
+    repoListItemDiv.appendChild(hndGoToTheRepo);
+    repoListItem.appendChild(repoListItemDiv);
     repoList.appendChild(repoListItem);
   });
-  mainWrapperContainer.appendChild(repoList);
+  repoWrapper.appendChild(repoList);
 };
 
 const getUserRepoProps = (user) =>{
   axios.get(`https://api.github.com/users/${user}/repos`)
     .then(res=>{
         const userReposProps = res.data;
-        let sortedRepos = userReposProps.sort(
-          (a, b) => new Date(b.created_at) - new Date(a.created_at)
-        );
-        slicedRepos = sortedRepos.slice(0, 5);
-        listRepos(slicedRepos);
+        if (userReposProps.length === 0) {
+          toast("400", "usuário não possui repositórios!");
+        } else {
+          const sortedRepos = userReposProps.sort(
+            (a, b) => new Date(b.created_at) - new Date(a.created_at)
+          );
+          listRepos(sortedRepos);
+        }
     }).catch((err) => {
-      toast("400", "usuário não possui repositórios!");
+      toast("404", "usuário não encontrado!");
     })
 }
+
 
 const getUserProps = (user) =>{
   axios.get(`https://api.github.com/users/${user}`)
@@ -232,6 +243,8 @@ const getUserProps = (user) =>{
         }
     }).catch((err) => {
       toast("404", "usuário não encontrado!");
+      groupOne();
+      
     })
 };
 
@@ -241,7 +254,7 @@ const backPageOne = () =>{
     groupOne();
     searchInput.focus();
     sortedRepos = [];
-    mainWrapperContainer.removeChild(repoList);
+    mainWrapperContainer.removeChild(repoWrapper);
   };
 
 hndBackButton.onclick = backPageOne;
