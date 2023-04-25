@@ -11,7 +11,9 @@ body{
 
 .wrapper{
     display: flex;
-    margin: 100px;
+    justify-content: space-between;
+    flex-direction: row;
+    align-items: center;
 }
 
 .asside-wrapper{
@@ -19,7 +21,7 @@ body{
     flex-direction: column;
     justify-content: center;
     align-items: center;
-
+    width: 317px;
     margin: 64px;
 }
 
@@ -33,6 +35,12 @@ body{
     border: 2px solid #D7E0EB;
     box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.08);
     margin-bottom: 36px;
+}
+
+.perfil-image{
+    width: 180px;
+    height: 180px;
+    border-radius: 50%;
 }
 
 .name-wrapper{
@@ -69,6 +77,57 @@ body{
     box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.08);
 }
 
+.header-toast-div{
+    display: flex;
+    align-items: center;
+    padding: .25rem .75rem;
+    background-clip: padding-box;
+    text-align: left;
+    background-color: rgb(255, 89, 89);
+    border-top: 2px solid rgb(216, 0, 0);
+    border-left: 2px solid rgb(216, 0, 0);
+    border-right: 2px solid rgb(216, 0, 0);
+    border-top-left-radius: 10px;
+    border-top-right-radius: 10px;
+    font-weight: 400;
+    line-height: 1.5;
+    
+}
+.body-toast-div{
+    padding: .75rem;
+    background-color: rgb(255, 89, 89);
+    font-weight: bold;
+    border-bottom-left-radius: 10px;
+    border-bottom-right-radius: 10px;
+    border: 2px solid rgb(216, 0, 0);
+}
+
+strong{
+        font-weight: bolder;
+}
+
+.toast{
+    
+    position: absolute;
+    top: 90%;
+}
+
+.toast-title{
+    margin-right: auto!important;
+}
+
+.close-btn{
+    cursor: pointer;
+    padding: 0;
+    background-color: transparent;
+    border: none;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
+    margin-left: .5rem !important;
+    margin-bottom: .25rem !important;
+}
+
 .user-name{
     font-style: normal;
     font-weight: 400;
@@ -83,5 +142,19 @@ body{
 /* MAIN WRAPPER  */
 
 .main-wrapper{
-    width: 980;
+    width: calc(100vw - 445px);
+    height: 100vh;
+}
+
+.main-wrapper-header{
+    height: 115px;
+}
+
+.main-wrapper-container{
+    display: flex;
+    justify-content: center;
+}
+
+.repo-list{
+    
 }

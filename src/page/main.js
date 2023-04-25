@@ -10,7 +10,9 @@ import seachIcon from '/search-icon.svg';
 import logoimg from '/logo.svg';
 import '../styles/mainStyle.css';
 
-let userArr = [];
+let repositories = [];
+
+let slicedRepos;
 
 const searchInput = document.createElement('input');
 const searchWrapper = document.createElement("div");
@@ -27,19 +29,49 @@ const name = document.createElement('p');
 const hndBackButton = document.createElement('button');
 const arrowLeftImg = document.createElement('img');
 const main = document.createElement('main');
+const toastDiv = document.createElement('div');
+toastDiv.className = "toast";
+const toastHeader = document.createElement('div');
+const toastBody = document.createElement('div');
+const titleP = document.createElement('strong');
+const messageP = document.createElement('p');
+const hndCloseToastButton = document.createElement('button');
+const spanCluseToastButton = document.createElement('span');
+const mainWrapperHeader = document.createElement('header');
+const mainWrapperContainer = document.createElement('main');
+const repoWrapper = document.createElement('div');
+const repoList = document.createElement('ul');
 
 
 const toast = (title, message) =>{
-  const toastDiv = document.createElement('div');
-  const toastBody = document.createElement('div');
-  const titleP = document.createElement('p');
+  spanCluseToastButton.innerText = "x"
+  hndCloseToastButton.appendChild(spanCluseToastButton);
+  hndCloseToastButton.onclick = ()=>{
+    document.body.removeChild(toastDiv)
+    searchInput.value = '';
+    searchInput.focus();
+    };
+  hndCloseToastButton.className = 'close-btn';
+  titleP.className = "toast-title";
   titleP.innerText = title;
-  toastBody.appendChild(titleP);
-  const messageP = document.createElement('p');
+  toastHeader.className = "header-toast-div"
+  toastHeader.appendChild(titleP);
+  toastHeader.appendChild(hndCloseToastButton);
+  messageP.className = "toast-message";
   messageP.innerText = message;
+  toastBody.className = "body-toast-div"
   toastBody.appendChild(messageP);
-
+  toastDiv.appendChild(toastHeader);
   toastDiv.appendChild(toastBody);
+  document.body.appendChild(toastDiv);
+  setTimeout(()=>
+    {
+      document.body.removeChild(toastDiv)
+      searchInput.value = '';
+      searchInput.focus();
+      repositories = [];
+    }
+    ,2 * 1000);
 }
 
 const groupOne = () =>{
@@ -86,7 +118,7 @@ const searchUser = () =>{
 hndSearchButton.onclick = searchUser
 }
 
-const groupTwo = () =>{
+const groupTwo = (avatar_url, user_name) =>{
   // criando a estrutura
 // wrapper principal
 wrapper.className = "wrapper";
@@ -104,8 +136,9 @@ asside.appendChild(perfilWrapper);
 
 // criando a img para salvar a foto de perfil
 
-perfilImage.src = '';
-perfilImage.alt = "foto do perfil"
+perfilImage.src = `${avatar_url}`;
+perfilImage.alt = "foto do perfil";
+perfilImage.className = 'perfil-image';
 perfilWrapper.appendChild(perfilImage);
 
 // criando o div que vai mostrar o nome
@@ -116,7 +149,7 @@ asside.appendChild(nameWrapper);
 // criando o p que vai exibir o nome
 
 name.className = "user-name";
-name.innerText = "nome do usuário";
+name.innerText = user_name;
 nameWrapper.appendChild(name);
 
 // criando o botão de voltar
@@ -135,41 +168,82 @@ hndBackButton.innerText = "voltar";
 main.className ="main-wrapper";
 wrapper.appendChild(main);
 
+mainWrapperHeader.className = "main-wrapper-header";
+main.appendChild(mainWrapperHeader);
 
-const backPageOne = () =>{
-  
-  document.body.removeChild(wrapper);
-  searchInput.value = '';
-  groupOne();
-  searchInput.focus();
-  userArr = [];
+mainWrapperContainer.className = "main-wrapper-container";
+main.appendChild(mainWrapperContainer);
+
+repoWrapper.className = "repo-wrapper";
+mainWrapperContainer.appendChild(repoWrapper);
+
+repoList.className = "repo-list";
+repoWrapper.appendChild(repoList);
+
 }
 
-hndBackButton.onclick = backPageOne;
+const listRepos = (repos) => {
+  repos.forEach((repo)=>{
+    const repoListItem = document.createElement('li');
+    const repoName = document.createElement('h2');
+    const repoResume = document.createElement('p');
+    const hndGoToTheRepo = document.createElement('button');
 
-}
-export const getUserProps = (user) =>{
-    axios.get(`https://api.github.com/users/${user}/repos`)
-    .then(res=>{
-        const userProps = res.data;
-        document.body.removeChild(searchWrapper);
-        groupTwo();
-        console.log(userProps);
-    })
-    .catch(err => {
-      if (err.response && err.response.status === 404){
-        error404();
-      }
+    repoName.innerText = repo.name;
+    repoResume.innerText = repo.description || 'Sem descrição';
+    hndGoToTheRepo.innerText = 'Repositório';
+    hndGoToTheRepo.addEventListener('click', () =>{
+      window.open(repo.html_url, '_blank');
     });
+    repoListItem.appendChild(repoName);
+    repoListItem.appendChild(repoResume);
+    repoListItem.appendChild(hndGoToTheRepo);
+    repoList.appendChild(repoListItem);
+  });
+  mainWrapperContainer.appendChild(repoList);
 };
 
-const error404 = () =>{
-  alert('Error 404, usuário não encontrado!')
-  searchInput.value = '';
-  searchInput.focus();
-
-
-  
+const getUserRepoProps = (user) =>{
+  axios.get(`https://api.github.com/users/${user}/repos`)
+    .then(res=>{
+        const userReposProps = res.data;
+        let sortedRepos = userReposProps.sort(
+          (a, b) => new Date(b.created_at) - new Date(a.created_at)
+        );
+        slicedRepos = sortedRepos.slice(0, 5);
+        listRepos(slicedRepos);
+    }).catch((err) => {
+      toast("400", "usuário não possui repositórios!");
+    })
 }
+
+const getUserProps = (user) =>{
+  axios.get(`https://api.github.com/users/${user}`)
+      .then(res=>{
+        const userProps = res.data;
+        if(userProps.message === "Not Found"){
+          toast("404", "usuário não encontrado!");
+        }else{
+          getUserRepoProps(user);
+          const avatar_url = userProps.avatar_url;
+          const name = userProps.name || userProps.login;
+          document.body.removeChild(searchWrapper);
+          groupTwo(avatar_url, name);
+        }
+    }).catch((err) => {
+      toast("404", "usuário não encontrado!");
+    })
+};
+
+const backPageOne = () =>{
+    document.body.removeChild(wrapper);
+    searchInput.value = '';
+    groupOne();
+    searchInput.focus();
+    sortedRepos = [];
+    mainWrapperContainer.removeChild(repoList);
+  };
+
+hndBackButton.onclick = backPageOne;
 
 groupOne();
